@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "name": "React_Go_proj",
+      "path": "."
+    },
+    {
+      "name": "FE",
+      "path": "FE"
+    },
+    {
+      "name": "BE",
+      "path": "BE"
+    }
+  ],
+  "settings": {}
+}

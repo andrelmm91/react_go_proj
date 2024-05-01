@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "go-movies-front-end",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
