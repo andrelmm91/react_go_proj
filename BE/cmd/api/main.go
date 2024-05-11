@@ -21,12 +21,11 @@ func main() {
 	// connect to DB
 	app.domain = "example.com"
 
+	log.Println("Starting application on port", port)
 	// start web server
 	err := http.ListenAndServe(fmt.Sprintf(":%d", port), app.routes())
 	if err != nil {
 		log.Fatalf("error listening and serving to http: %s", err)
 	}
-
-	log.Println("Starting application on port", port)
 
 }
