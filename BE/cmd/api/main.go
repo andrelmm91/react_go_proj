@@ -11,9 +11,8 @@ import (
 const port = 8080
 
 type application struct {
-	DSN    string
-	domain string
-	DB     *sql.DB
+	DSN string
+	DB  *sql.DB
 }
 
 func main() {
@@ -30,6 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 	app.DB = conn
+	defer app.DB.Close() // close when main func is exited
 
 	log.Println("Starting application on port", port)
 	// start web server
