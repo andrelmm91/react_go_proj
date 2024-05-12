@@ -1,7 +1,7 @@
 package main
 
 import (
-	repository "backend/internal/repo"
+	"backend/internal/repo"
 	"backend/internal/repo/dbrepo"
 	"flag"
 	"fmt"
@@ -21,7 +21,7 @@ func main() {
 	var app application
 
 	// read from command line
-	flag.StringVar(&app.DSN, "dsn", "host=localhost port=5432 user=postgres password=postgres dbname=movies sslmode=disable timezone=UTC connect_timeout=5", "Postgres Connection String")
+	flag.StringVar(&app.DSN, "dsn", "host=localhost port=5432 user=postgres password=postgres dbname=movies sslmode=disable timezone=UTC connect_timeout=5", "Postgres connection string")
 	flag.Parse()
 
 	// connect to DB
