@@ -32,7 +32,6 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	movies, err := app.DB.AllMovies()
-	log.Println(movies)
 	if err != nil {
 		log.Printf("Error loading AllMovies function: %s", err)
 		return
