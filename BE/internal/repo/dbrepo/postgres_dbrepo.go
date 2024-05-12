@@ -11,14 +11,14 @@ type PostgresDBRepo struct {
 	DB *sql.DB
 }
 
-const dbTimeOut = 3 * time.Second
+const dbTimeout = time.Second * 3
 
 func (m *PostgresDBRepo) Connection() *sql.DB {
 	return m.DB
 }
 
 func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeOut)
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
 	query := `
@@ -30,7 +30,7 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 			movies
 		order by
 			title
-		`
+	`
 
 	rows, err := m.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -43,15 +43,15 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 	for rows.Next() {
 		var movie models.Movie
 		err := rows.Scan(
-			movie.ID,
-			movie.Title,
-			movie.ReleaseDate,
-			movie.RunTime,
-			movie.MPAARating,
-			movie.Description,
-			movie.Image,
-			movie.CreatedAt,
-			movie.UpdatedAt,
+			&movie.ID,
+			&movie.Title,
+			&movie.ReleaseDate,
+			&movie.RunTime,
+			&movie.MPAARating,
+			&movie.Description,
+			&movie.Image,
+			&movie.CreatedAt,
+			&movie.UpdatedAt,
 		)
 		if err != nil {
 			return nil, err
