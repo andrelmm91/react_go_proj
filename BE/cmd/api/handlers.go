@@ -1,11 +1,9 @@
 package main
 
 import (
-	"backend/internal/models"
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
-	"time"
 )
 
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +21,7 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	//Marshalling json
 	out, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Printf("Error marshal payload into json: ", err)
+		log.Printf("Error marshal payload into json: %s", err)
 	}
 	// settinh headers
 	w.Header().Set("Content-Type", "application/json")
@@ -32,43 +30,18 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
-func (app *application) AllMovies(w http.ResponseWriter, r *http.Request) {
-	var movies []models.Movie
-
-	rd, _ := time.Parse("2006-01-02", "1986-03-07")
-
-	highlander := models.Movie{
-		ID:          1,
-		Title:       "Highlander",
-		ReleaseDate: rd,
-		MPAARating:  "R",
-		RunTime:     116,
-		Description: "Cool",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
+	movies, err := app.DB.AllMovies()
+	log.Println(movies)
+	if err != nil {
+		log.Printf("Error loading AllMovies function: %s", err)
+		return
 	}
-
-	movies = append(movies, highlander)
-
-	rd, _ = time.Parse("2006-01-02", "1981-06-21")
-
-	rotla := models.Movie{
-		ID:          2,
-		Title:       "Raiders",
-		ReleaseDate: rd,
-		MPAARating:  "PG13",
-		RunTime:     115,
-		Description: "Nice",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
-	}
-
-	movies = append(movies, rotla)
 
 	//Marshalling json
 	out, err := json.Marshal(movies)
 	if err != nil {
-		fmt.Sprintf("Error marshal payload into json: ", err)
+		log.Printf("Error marshal payload into json: %s", err)
 	}
 	// settinh headers
 	w.Header().Set("Content-Type", "application/json")

@@ -13,6 +13,10 @@ type PostgresDBRepo struct {
 
 const dbTimeOut = 3 * time.Second
 
+func (m *PostgresDBRepo) Connection() *sql.DB {
+	return m.DB
+}
+
 func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeOut)
 	defer cancel()
@@ -20,8 +24,8 @@ func (m *PostgresDBRepo) AllMovies() ([]*models.Movie, error) {
 	query := `
 		select
 			id, title, release_date, runtime,
-			mpaa_rating, description, coalesce(imsge, ''),
-			created_at, update_at
+			mpaa_rating, description, coalesce(image, ''),
+			created_at, updated_at
 		from
 			movies
 		order by

@@ -1,7 +1,8 @@
 package main
 
 import (
-	"database/sql"
+	repository "backend/internal/repo"
+	"backend/internal/repo/dbrepo"
 	"flag"
 	"fmt"
 	"log"
@@ -12,7 +13,7 @@ const port = 8080
 
 type application struct {
 	DSN string
-	DB  *sql.DB
+	DB  repository.DatabaseRepo // pointing to the repository and its interface
 }
 
 func main() {
@@ -28,8 +29,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.DB = conn
-	defer app.DB.Close() // close when main func is exited
+	app.DB = &dbrepo.PostgresDBRepo{DB: conn}
+	defer app.DB.Connection().Close() // close when main func is exited
 
 	log.Println("Starting application on port", port)
 	// start web server
