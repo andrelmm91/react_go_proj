@@ -1,10 +1,9 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net/http"
-
-	
 )
 
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
@@ -33,11 +32,10 @@ func (app *application) getAllMovies(w http.ResponseWriter, r *http.Request) {
 	_ = app.writeJSON(w, http.StatusOK, movies)
 }
 
-
-func (app *application) authentication(w http.ResponseWriter, r *http.Request) {
+func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	// read json payload
 	var requestPayload struct {
-		Email string `json:"email"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
@@ -46,16 +44,21 @@ func (app *application) authentication(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, err, http.StatusBadRequest)
 		return
 	}
-	
+
 	// validate user against database
+	user, err := app.DB.GetUserByEmail(requestPayload.Email)
+	if err != nil {
+		app.errorJSON(w, errors.New("Invalid credentials"), http.StatusBadRequest)
+		return
+	}
 
 	// check password
 
 	// create a jwt user (mocked)
-	u := jwtUser {
-		ID: 1,
+	u := jwtUser{
+		ID:        1,
 		FirstName: "Admin",
-		LastName: "User",
+		LastName:  "User",
 	}
 
 	// generate tokens
