@@ -16,7 +16,7 @@ func (app *application) routes() http.Handler {
 	mux.Use(app.enableCORS)
 
 	// routes
-	mux.Get("/authenticate", app.authenticate) // mocked user
+	mux.Post("/authenticate", app.authenticate)
 	mux.Get("/", app.Home)
 	mux.Get("/movies", app.getAllMovies)
 
