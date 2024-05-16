@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import Alert from "./components/Alert";
 
@@ -12,7 +12,28 @@ function App() {
   const logOut = () => {
     setJwtToken("");
     navigate("/login");
-  }
+  };
+
+  // refresh token
+  useEffect(() => {
+    if (jwtToken === "") {
+      const requestOption = {
+        method: "GET",
+        credentials: "include",
+      };
+
+      fetch("/refresh", requestOption)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.access_token) {
+            setJwtToken(data.access_token);
+          }
+        })
+        .catch((error) => {
+          console.log("user is not logged in", error);
+        });
+    }
+  }, [jwtToken]);
 
   return (
     <div className="container">
@@ -38,7 +59,10 @@ function App() {
         <div className="col-md-2">
           <nav>
             <div className="list-group">
-              <Link to="/" className="list-group-item list-group-item-action">
+              <Link
+                to="/"
+                className="list-group-item list-group-item-action"
+              >
                 Home
               </Link>
               <Link
