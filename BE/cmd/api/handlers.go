@@ -70,26 +70,26 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// generate tokens
-	tokens, err := app.auth.GenerateTokenPair(&u)
+	tokenPairs, err := app.auth.GenerateTokenPair(&u)
 	if err != nil {
 		app.errorJSON(w, err)
 		return
 	}
 
-	refreshCookie := app.auth.GetRefreshCookie(tokens.RefreshToken)
+	refreshCookie := app.auth.GetRefreshCookie(tokenPairs.RefreshToken)
 	http.SetCookie(w, refreshCookie)
 
-	app.writeJSON(w, http.StatusAccepted, tokens)
+	app.writeJSON(w, http.StatusAccepted, tokenPairs)
 }
 
 func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
-	for _, cookie := r.Cookie() {
+	for _, cookie := range r.Cookies() {
 		if cookie.Name == app.auth.CookieName {
 			claims := &Claims{}
 			refreshToken := cookie.Value
 
 			// parse the tokens
-			_, err := jwt.ParseWithClaims(refreshToken, claims, func (token *jwt.Token) (interface{}, error) {
+			_, err := jwt.ParseWithClaims(refreshToken, claims, func(token *jwt.Token) (interface{}, error) {
 				return []byte(app.JWTSecret), nil
 			})
 			if err != nil {
@@ -104,7 +104,27 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			user, err := app.DB.GetUserByEmail()
+			user, err := app.DB.GetUserById(userID)
+			if err != nil {
+				app.errorJSON(w, errors.New("unkown user"), http.StatusUnauthorized)
+				return
+			}
+
+			u := jwtUser{
+				ID:        user.ID,
+				FirstName: user.FirstName,
+				LastName:  user.LastName,
+			}
+
+			tokenPairs, err := app.auth.GenerateTokenPair(&u)
+			if err != nil {
+				app.errorJSON(w, errors.New("error generating tokens"), http.StatusUnauthorized)
+				return
+			}
+
+			http.SetCookie(w, app.auth.GetRefreshCookie(tokenPairs.RefreshToken))
+
+			app.writeJSON(w, http.StatusOK, tokenPairs)
 		}
 	}
 }
