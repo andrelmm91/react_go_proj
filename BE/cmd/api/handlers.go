@@ -4,6 +4,9 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
@@ -77,4 +80,31 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, refreshCookie)
 
 	app.writeJSON(w, http.StatusAccepted, tokens)
+}
+
+func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
+	for _, cookie := r.Cookie() {
+		if cookie.Name == app.auth.CookieName {
+			claims := &Claims{}
+			refreshToken := cookie.Value
+
+			// parse the tokens
+			_, err := jwt.ParseWithClaims(refreshToken, claims, func (token *jwt.Token) (interface{}, error) {
+				return []byte(app.JWTSecret), nil
+			})
+			if err != nil {
+				app.errorJSON(w, errors.New("unauthorized"), http.StatusUnauthorized)
+				return
+			}
+
+			// get the user id from the token claims
+			userID, err := strconv.Atoi(claims.Subject)
+			if err != nil {
+				app.errorJSON(w, errors.New("unkown user"), http.StatusUnauthorized)
+				return
+			}
+
+			user, err := app.DB.GetUserByEmail()
+		}
+	}
 }
