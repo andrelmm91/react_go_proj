@@ -7,10 +7,25 @@ function App() {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertClassName, setAlertClassName] = useState("d-none");
 
+  const [ticking, setTicking] = useState(false);
+  const [tickInterval, setTickInterval] = useState();
+
   const navigate = useNavigate();
 
   const logOut = () => {
-    setJwtToken("");
+    const requestOption = {
+      method: "GET",
+      credentials: "include",
+    };
+
+    fetch("/logout", requestOption)
+      .catch((error) => {
+        console.log("error logging out", error);
+      })
+      .finally(() => {
+        setJwtToken("");
+      });
+
     navigate("/login");
   };
 
@@ -34,6 +49,27 @@ function App() {
         });
     }
   }, [jwtToken]);
+
+  // refreshing token
+  const toggleRefresh = () => {
+    console.log("clcked");
+
+    if (!ticking) {
+      console.log("turning on ticking");
+      let i = setInterval(() => {
+        console.log("this will run every second");
+      }, 1000);
+      setTickInterval(i);
+      console.log("setting tick interval to", i);
+      setTicking(true);
+    } else {
+      console.log("turning off ticking");
+      console.log("turning off tickInterval", tickInterval);
+      setTickInterval(null);
+      clearInterval(tickInterval);
+      setTicking(false);
+    }
+  };
 
   return (
     <div className="container">
@@ -103,6 +139,13 @@ function App() {
           </nav>
         </div>
         <div className="col-md-10">
+          <a
+            className="btn btn-outline-secondary"
+            href="#!"
+            onClick={toggleRefresh}
+          >
+            Toggle Ticking
+          </a>
           <Alert message={alertMessage} className={alertClassName} />
           <Outlet
             context={{
