@@ -35,19 +35,19 @@ type Claims struct {
 }
 
 func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
-	// create a token
+	// Create a token
 	token := jwt.New(jwt.SigningMethodHS256)
 
-	// set the claims
+	// Set the claims
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = fmt.Sprintf("%s %s", user.FirstName, user.LastName)
-	claims["subs"] = fmt.Sprint(user.ID)
+	claims["sub"] = fmt.Sprint(user.ID)
 	claims["aud"] = j.Audience
 	claims["iss"] = j.Issuer
 	claims["iat"] = time.Now().UTC().Unix()
 	claims["typ"] = "JWT"
 
-	// Set the empiry for JWT
+	// Set the expiry for JWT
 	claims["exp"] = time.Now().UTC().Add(j.TokenExpiry).Unix()
 
 	// Create a signed token
@@ -56,22 +56,22 @@ func (j *Auth) GenerateTokenPair(user *jwtUser) (TokenPairs, error) {
 		return TokenPairs{}, err
 	}
 
-	// create a refresh token and set claims
+	// Create a refresh token and set claims
 	refreshToken := jwt.New(jwt.SigningMethodHS256)
-	refreshTokenClaim := refreshToken.Claims.(jwt.MapClaims)
-	refreshTokenClaim["sub"] = fmt.Sprint(user.ID)
-	refreshTokenClaim["iat"] = time.Now().UTC().Unix()
+	refreshTokenClaims := refreshToken.Claims.(jwt.MapClaims)
+	refreshTokenClaims["sub"] = fmt.Sprint(user.ID)
+	refreshTokenClaims["iat"] = time.Now().UTC().Unix()
 
-	// set the expire for the refresh token
-	refreshTokenClaim["exp"] = time.Now().UTC().Add(j.RefreshExpiry).Unix()
+	// Set the expiry for the refresh token
+	refreshTokenClaims["exp"] = time.Now().UTC().Add(j.RefreshExpiry).Unix()
 
-	// create signed refresh token
-	signedRefreshToken, err := token.SignedString([]byte(j.Secret))
+	// Create signed refresh token
+	signedRefreshToken, err := refreshToken.SignedString([]byte(j.Secret))
 	if err != nil {
 		return TokenPairs{}, err
 	}
 
-	// create tokenPairs and populate with signed tokens
+	// Create TokenPairs and populate with signed tokens
 	var tokenPairs = TokenPairs{
 		Token:        signedAccessToken,
 		RefreshToken: signedRefreshToken,

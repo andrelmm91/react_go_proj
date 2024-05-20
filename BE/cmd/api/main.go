@@ -36,7 +36,7 @@ func main() {
 	flag.StringVar(&app.Domain, "domain", "example.com", "domain")
 	flag.Parse()
 
-	// connect to DB
+	// connect to the database
 	conn, err := app.connectToDB()
 	if err != nil {
 		log.Fatal(err)
