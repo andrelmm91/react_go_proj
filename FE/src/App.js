@@ -54,7 +54,7 @@ function App() {
             .catch((error) => {
               console.log("user is not logged in");
             });
-        }, 1000);
+        }, 60 * 1000);
 
         setTickInterval(i);
         console.log("setting tick interval to", i);

@@ -32,7 +32,7 @@ func main() {
 	flag.StringVar(&app.JWTSecret, "jwt-secret", "verysecret", "signing secret")
 	flag.StringVar(&app.JWTIssuer, "jwt-issuer", "example.com", "signing issuer")
 	flag.StringVar(&app.JWTAudience, "jwt-audience", "example.com", "signing audience")
-	flag.StringVar(&app.CookieDomain, "cookie-domain", "localhost", "cookie domain")
+	flag.StringVar(&app.CookieDomain, "cookie-domain", "", "cookie domain")
 	flag.StringVar(&app.Domain, "domain", "example.com", "domain")
 	flag.Parse()
 
@@ -52,7 +52,7 @@ func main() {
 		TokenExpiry:   time.Minute * 15,
 		RefreshExpiry: time.Hour * 24,
 		CookiePath:    "/",
-		CookieName:    "__Host-refresh_token",
+		CookieName:    "refresh_token",
 		CookieDomain:  app.CookieDomain,
 	}
 
