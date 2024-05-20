@@ -24,47 +24,49 @@ function App() {
       })
       .finally(() => {
         setJwtToken("");
-        toggleRefresh(false)
+        toggleRefresh(false);
       });
 
     navigate("/login");
   };
 
   // refreshing token
-  const toggleRefresh = useCallback((status) => {
-    console.log("clcked");
+  const toggleRefresh = useCallback(
+    (status) => {
+      console.log("clcked");
 
-    if (status) {
-      console.log("turning on ticking");
+      if (status) {
+        console.log("turning on ticking");
 
-      let i = setInterval(() => {
-        const requestOption = {
-          method: "GET",
-          credentials: "include",
-        };
+        let i = setInterval(() => {
+          const requestOption = {
+            method: "GET",
+            credentials: "include",
+          };
 
-        fetch("/refresh", requestOption)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.access_token) {
-            setJwtToken(data.access_token);
-          }
-        })
-        .catch((error) => {
-          console.log("user is not logged in");
-        });
-      }, 600000);
+          fetch("/refresh", requestOption)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.access_token) {
+                setJwtToken(data.access_token);
+              }
+            })
+            .catch((error) => {
+              console.log("user is not logged in");
+            });
+        }, 1000);
 
-      setTickInterval(i);
-      console.log("setting tick interval to", i);
-
-    } else {
-      console.log("turning off ticking");
-      console.log("turning off tickInterval", tickInterval);
-      setTickInterval(null);
-      clearInterval(tickInterval);
-    }
-  }, [tickInterval]);
+        setTickInterval(i);
+        console.log("setting tick interval to", i);
+      } else {
+        console.log("turning off ticking");
+        console.log("turning off tickInterval", tickInterval);
+        setTickInterval(null);
+        clearInterval(tickInterval);
+      }
+    },
+    [tickInterval]
+  );
 
   // refresh token
   useEffect(() => {
@@ -79,7 +81,7 @@ function App() {
         .then((data) => {
           if (data.access_token) {
             setJwtToken(data.access_token);
-            toggleRefresh(true)
+            toggleRefresh(true);
           }
         })
         .catch((error) => {

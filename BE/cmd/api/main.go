@@ -33,7 +33,7 @@ func main() {
 	flag.StringVar(&app.JWTIssuer, "jwt-issuer", "example.com", "signing issuer")
 	flag.StringVar(&app.JWTAudience, "jwt-audience", "example.com", "signing audience")
 	flag.StringVar(&app.CookieDomain, "cookie-domain", "localhost", "cookie domain")
-	flag.StringVar(&app.Domain, "domain", "localhost", "domain")
+	flag.StringVar(&app.Domain, "domain", "example.com", "domain")
 	flag.Parse()
 
 	// connect to DB
@@ -52,8 +52,8 @@ func main() {
 		TokenExpiry:   time.Minute * 15,
 		RefreshExpiry: time.Hour * 24,
 		CookiePath:    "/",
-		CookieDomain:  "__Host-refresh_token",
-		CookieName:    app.CookieDomain,
+		CookieName:    "__Host-refresh_token",
+		CookieDomain:  app.CookieDomain,
 	}
 
 	log.Println("Starting application on port", port)
