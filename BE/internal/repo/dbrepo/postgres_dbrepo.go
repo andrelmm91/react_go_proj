@@ -203,7 +203,7 @@ func (m *PostgresDBRepo) OneMovieForEdit(id int) (*models.Movie, []*models.Genre
 
 	// all genres
 	var allGenres []*models.Genre
-	query = "select id, genre, from genres order by genre"
+	query = "select id, genre from genres order by genre"
 
 	gRows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil && err != sql.ErrNoRows {
