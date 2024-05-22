@@ -120,6 +120,12 @@ const EditMovie = () => {
                     errorDiv={hasError("description") ? "text-danger" : "d-none"}
                 />
 
+                <hr />
+
+                <h3>Genres</h3>
+
+                
+
 
             </form>
         </div>
