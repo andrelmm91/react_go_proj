@@ -189,7 +189,7 @@ func (app *application) MovieForEdit(w http.ResponseWriter, r *http.Request) {
 
 	// create a payload to be sent
 	var payload = struct {
-		Movie  *models.Movie `json:"movie"`
+		Movie  *models.Movie   `json:"movie"`
 		Genres []*models.Genre `json:"genres"`
 	}{
 		movie,
@@ -198,3 +198,5 @@ func (app *application) MovieForEdit(w http.ResponseWriter, r *http.Request) {
 
 	_ = app.writeJSON(w, http.StatusOK, payload)
 }
+
+func (app *application) AllGenre(w http.ResponseWriter, r *http.Request) {}
