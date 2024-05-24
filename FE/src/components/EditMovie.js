@@ -4,6 +4,7 @@ import Input from "./form/Input";
 import Select from "./form/Select";
 import TextArea from "./form/TextArea";
 import Checkbox from "./form/Checkbox";
+import Swal from "sweetalert2";
 
 const EditMovie = () => {
     const navigate = useNavigate();
@@ -79,7 +80,7 @@ const EditMovie = () => {
                     })
 
                     setMovie(m => ({
-                        ...movie,
+                        ...m,
                         genres: checks,
                         genres_array: [],
                     }))
@@ -95,6 +96,37 @@ const EditMovie = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        let errors = [];
+        let required = [
+            { field: movie.title, name: "title"},
+            { field: movie.release_date, name: "release_date"},
+            { field: movie.runtime, name: "runtime"},
+            { field: movie.description, name: "description"},
+            { field: movie.mpaa_rating, name: "mpaa_rating"},
+        ]
+
+        required.forEach(function (obj) {
+            if (obj.field === "") {
+                errors.push(obj.name);
+            }
+        })
+
+        if (movie.genres_array.length === 0) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'You must choose at least one genre!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            })
+            errors.push("genres");
+        }
+
+        setErrors(errors);
+
+        if (errors.length > 0) {
+            return false;
+        }
     }
 
     const handleChange = () => (event) => {
@@ -111,13 +143,28 @@ const EditMovie = () => {
         console.log("value in handleCheck:", event.target.value);
         console.log("checked is", event.target.checked);
         console.log("position is", position);
+
+        let tmpArr = movie.genres;
+        tmpArr[position].checked = !tmpArr[position].checked;
+
+        let tmpIDs = movie.genres_array;
+        if (!event.target.checked) {
+            tmpIDs.splice(tmpIDs.indexOf(event.target.value));
+        } else {
+            tmpIDs.push(parseInt(event.target.value, 10));
+        }
+
+        setMovie({
+            ...movie,
+            genres_array: tmpIDs,
+        })
     }
 
     return(
         <div>
             <h2>Add/Edit Movie</h2>
             <hr />
-            <pre>{JSON.stringify(movie, null, 3)}</pre>
+            {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
 
             <form onSubmit={handleSubmit}>
 
@@ -195,6 +242,10 @@ const EditMovie = () => {
                         )}
                     </>
                 }
+
+                <hr />
+
+                <button className="btn btn-primary">Save</button>
 
 
             </form>
