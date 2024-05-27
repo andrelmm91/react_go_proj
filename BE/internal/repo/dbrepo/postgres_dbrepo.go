@@ -319,7 +319,7 @@ func (m *PostgresDBRepo) InsertMovie(movie models.Movie) (int, error) {
 	defer cancel()
 
 	stmt := `insert into movies (title, description, release_date, runtime,
-		mpaa_rating, created_at, updated_at, image
+		mpaa_rating, created_at, updated_at, image)
 		values ($1, $2, $3, $4, $5, $6, $7, $8) returning id`
 
 	var newID int
