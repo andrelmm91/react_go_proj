@@ -22,6 +22,7 @@ func (app *application) routes() http.Handler {
 	mux.Get("/", app.Home)
 	mux.Get("/movies", app.getAllMovies)
 	mux.Get("/movies/{id}", app.GetMovie)
+	mux.Get("/movies/genres/{id}", app.AllMoviesByGenre)
 
 	// routes for authorized users (token validation)
 	mux.Route("/admin", func(mux chi.Router) {
@@ -32,6 +33,7 @@ func (app *application) routes() http.Handler {
 		mux.Put("/movies/0", app.InsertMovie)
 		mux.Patch("/movies/{id}", app.UpdateMovie)
 		mux.Delete("/movies/{id}", app.DeleteMovie)
+
 	})
 
 	return mux
