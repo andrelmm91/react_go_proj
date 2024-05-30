@@ -10,3 +10,6 @@ go get github.com/jackc/pgx/v5/stdlib
 
 // jwt token authentication
 go get github.com/golang-jwt/jwt/v5
+
+// graphQL
+go get github.com/graphql-go/graphql
