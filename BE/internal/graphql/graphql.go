@@ -2,6 +2,7 @@ package graphql
 
 import (
 	"backend/internal/models"
+	"errors"
 	"strings"
 
 	"github.com/graphql-go/graphql"
@@ -81,6 +82,8 @@ func New(movies []*models.Movie) *GraphQL {
 							theList = append(theList, currentMovie)
 						}
 					}
+				} else {
+					return nil, errors.New("error executing search query")
 				}
 				return theList, nil
 			},
@@ -115,3 +118,27 @@ func New(movies []*models.Movie) *GraphQL {
 	}
 }
 
+func (g *GraphQL) Query() (*graphql.Result, error) {
+	rootQuery := graphql.ObjectConfig{
+		Name: "RootQuery",
+		Fields: g.Fields,
+	}
+	schemaConfig := grapql.SchemaConfig{
+		Query: graphql.NewObject(rootQuery),
+	}
+	schema, err := graphql.NewSchema(schemaConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	params := graphql.Params{
+		Schema: schema,
+		RequestString: g.QueryString,
+	}
+
+	resp := graphql.Do(params)
+	if len(resp.Errors > 0) {
+		return nil, errors.New("error executing the query")
+	}	
+
+}
