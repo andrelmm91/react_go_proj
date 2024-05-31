@@ -123,7 +123,7 @@ func (g *GraphQL) Query() (*graphql.Result, error) {
 		Name: "RootQuery",
 		Fields: g.Fields,
 	}
-	schemaConfig := grapql.SchemaConfig{
+	schemaConfig := graphql.SchemaConfig{
 		Query: graphql.NewObject(rootQuery),
 	}
 	schema, err := graphql.NewSchema(schemaConfig)
@@ -137,8 +137,9 @@ func (g *GraphQL) Query() (*graphql.Result, error) {
 	}
 
 	resp := graphql.Do(params)
-	if len(resp.Errors > 0) {
+	if len(resp.Errors) > 0 {
 		return nil, errors.New("error executing the query")
 	}	
 
+	return resp, nil
 }

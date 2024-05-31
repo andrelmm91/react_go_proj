@@ -23,6 +23,9 @@ func (app *application) routes() http.Handler {
 	mux.Get("/movies", app.getAllMovies)
 	mux.Get("/movies/{id}", app.GetMovie)
 	mux.Get("/movies/genres/{id}", app.AllMoviesByGenre)
+	// routes GraphQL
+	mux.Get("/graph", app.moviesGraphQL)
+
 
 	// routes for authorized users (token validation)
 	mux.Route("/admin", func(mux chi.Router) {
