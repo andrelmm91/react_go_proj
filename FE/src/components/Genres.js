@@ -14,7 +14,7 @@ const Genres = () => {
       headers: headers,
     };
 
-    fetch(`/genres`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/genres`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -37,18 +37,18 @@ const Genres = () => {
         <hr />
 
         <div className="list-group">
-            {genres.map((g) => (
-                <Link
-                    key={g.id}
-                    className="list-group-item list-group-item-action"
-                    to={`/genres/${g.id}`}
-                    state={
-                        {
-                            genreName: g.genre,
-                        }
-                    }
-                    >{g.genre}</Link>
-            ))}
+          {genres.map((g) => (
+            <Link
+              key={g.id}
+              className="list-group-item list-group-item-action"
+              to={`/genres/${g.id}`}
+              state={{
+                genreName: g.genre,
+              }}
+            >
+              {g.genre}
+            </Link>
+          ))}
         </div>
       </div>
     );

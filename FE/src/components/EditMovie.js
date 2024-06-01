@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useOutletContext,
+  useParams,
+} from "react-router-dom";
 import Input from "./form/Input";
 import Select from "./form/Select";
 import TextArea from "./form/TextArea";
@@ -70,7 +74,7 @@ const EditMovie = () => {
         headers: headers,
       };
 
-      fetch(`/genres`, requestOptions)
+      fetch(`${process.env.REACT_APP_BACKEND}/genres`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           const checks = [];
@@ -99,7 +103,10 @@ const EditMovie = () => {
         headers: headers,
       };
 
-      fetch(`/admin/movies/${id}`, requestOptions)
+      fetch(
+        `${process.env.REACT_APP_BACKEND}/admin/movies/${id}`,
+        requestOptions
+      )
         .then((response) => {
           if (response.status !== 200) {
             setError("Invalid response code: " + response.status);
@@ -116,9 +123,17 @@ const EditMovie = () => {
 
           data.genres.forEach((g) => {
             if (data.movie.genres_array.indexOf(g.id) !== -1) {
-              checks.push({ id: g.id, checked: true, genre: g.genre });
+              checks.push({
+                id: g.id,
+                checked: true,
+                genre: g.genre,
+              });
             } else {
-              checks.push({ id: g.id, checked: false, genre: g.genre });
+              checks.push({
+                id: g.id,
+                checked: false,
+                genre: g.genre,
+              });
             }
           });
 
@@ -194,7 +209,10 @@ const EditMovie = () => {
       credentials: "include",
     };
 
-    fetch(`/admin/movies/${movie.id}`, requestOptions)
+    fetch(
+      `${process.env.REACT_APP_BACKEND}/admin/movies/${movie.id}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -241,36 +259,41 @@ const EditMovie = () => {
 
   const confirmDelete = () => {
     Swal.fire({
-        title: 'Delete movie?',
-        text: "You cannot undo this action!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-            let headers = new Headers();
-            headers.append("Authorization", "Bearer " + jwtToken)
+      title: "Delete movie?",
+      text: "You cannot undo this action!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let headers = new Headers();
+        headers.append("Authorization", "Bearer " + jwtToken);
 
-            const requestOptions = {
-                method: "DELETE",
-                headers: headers,
+        const requestOptions = {
+          method: "DELETE",
+          headers: headers,
+        };
+
+        fetch(
+          `${process.env.REACT_APP_BACKEND}/admin/movies/${movie.id}`,
+          requestOptions
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              console.log(data.error);
+            } else {
+              navigate("/manage-catalogue");
             }
-
-          fetch(`/admin/movies/${movie.id}`, requestOptions)
-            .then((response) => response.json())
-            .then((data) => {
-                if (data.error) {
-                    console.log(data.error);
-                } else {
-                    navigate("/manage-catalogue");
-                }
-            })
-            .catch(err => {console.log(err)});
-        }
-      })
-  }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  };
 
   if (error !== null) {
     return <div>Error: {error.message}</div>;
@@ -282,7 +305,12 @@ const EditMovie = () => {
         {/* <pre>{JSON.stringify(movie, null, 3)}</pre> */}
 
         <form onSubmit={handleSubmit}>
-          <input type="hidden" name="id" value={movie.id} id="id"></input>
+          <input
+            type="hidden"
+            name="id"
+            value={movie.id}
+            id="id"
+          ></input>
 
           <Input
             title={"Title"}
@@ -302,7 +330,9 @@ const EditMovie = () => {
             name={"release_date"}
             value={movie.release_date}
             onChange={handleChange("release_date")}
-            errorDiv={hasError("release_date") ? "text-danger" : "d-none"}
+            errorDiv={
+              hasError("release_date") ? "text-danger" : "d-none"
+            }
             errorMsg={"Please enter a release date"}
           />
 
@@ -325,7 +355,9 @@ const EditMovie = () => {
             onChange={handleChange("mpaa_rating")}
             placeHolder={"Choose..."}
             errorMsg={"Please choose"}
-            errorDiv={hasError("mpaa_rating") ? "text-danger" : "d-none"}
+            errorDiv={
+              hasError("mpaa_rating") ? "text-danger" : "d-none"
+            }
           />
 
           <TextArea
@@ -335,7 +367,9 @@ const EditMovie = () => {
             rows={"3"}
             onChange={handleChange("description")}
             errorMsg={"Please enter a description"}
-            errorDiv={hasError("description") ? "text-danger" : "d-none"}
+            errorDiv={
+              hasError("description") ? "text-danger" : "d-none"
+            }
           />
 
           <hr />
@@ -363,7 +397,11 @@ const EditMovie = () => {
           <button className="btn btn-primary">Save</button>
 
           {movie.id > 0 && (
-            <a href="#!" className="btn btn-danger ms-2" onClick={confirmDelete}>
+            <a
+              href="#!"
+              className="btn btn-danger ms-2"
+              onClick={confirmDelete}
+            >
               Delete Movie
             </a>
           )}
